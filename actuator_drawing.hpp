@@ -15,6 +15,8 @@
 
 #include <vector>
 
+struct joystick_thread;
+
 struct actuator_drawing : wxScrolledWindow{
 
    void OnSize(wxSizeEvent & event);
@@ -48,6 +50,16 @@ private:
    static constexpr uint8_t num_actuators = 16;
 
    actuator* m_actuators[num_actuators];
+   /*
+      These are updated by the joystick thread
+      Kept separate to the actual actuators
+      then they can be updated quickly while maybe the actuators are being drawn for example
+      The actuators should use TryEnter to check for new values
+   */
+   int32_t   m_actuator_channel[num_actuators];
+
+   friend class joystick_thread;
+   friend class main_frame;
 };
 
 #endif // ACTUATOR_WIDGET_HPP_INCLUDED

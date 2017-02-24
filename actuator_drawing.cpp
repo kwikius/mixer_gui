@@ -10,6 +10,7 @@
 #include <quan/gx/primitives/simple_line.hpp>
 #include <quan/gx/wxwidgets/graphics_context.hpp>
 #include "servo.hpp"
+//#include "joystick_thread.hpp"
 
 namespace {
    QUAN_ANGLE_LITERAL(rad)
@@ -19,14 +20,13 @@ namespace {
 
 BEGIN_EVENT_TABLE(actuator_drawing,wxScrolledWindow)
 
- EVT_SIZE(actuator_drawing::OnSize)
- EVT_PAINT(actuator_drawing::OnPaint)
- EVT_SCROLLWIN(actuator_drawing::OnScroll)
- EVT_LEFT_DOWN(actuator_drawing::OnMouseLeftDown)
- EVT_LEFT_UP(actuator_drawing::OnMouseLeftUp)
- EVT_MOTION(actuator_drawing::OnMouseMove)
+   EVT_SIZE(actuator_drawing::OnSize)
+   EVT_PAINT(actuator_drawing::OnPaint)
+   EVT_SCROLLWIN(actuator_drawing::OnScroll)
+   EVT_LEFT_DOWN(actuator_drawing::OnMouseLeftDown)
+   EVT_LEFT_UP(actuator_drawing::OnMouseLeftUp)
+   EVT_MOTION(actuator_drawing::OnMouseMove)
  
-
 END_EVENT_TABLE()
 
 actuator_drawing::~actuator_drawing()
@@ -95,8 +95,10 @@ void actuator_drawing::OnPaint(wxPaintEvent & event)
       &this->m_device_window
    };
 
-   for ( auto p: this->m_actuators){
+   for (uint8_t i = 0u ; i < num_actuators; ++i){
+      auto p = m_actuators[i];
       if ( p != nullptr){
+         p->set_value(m_actuator_channel[i]/ 32767.0);;
          p->draw(wc);
       }
    }
@@ -134,7 +136,10 @@ void actuator_drawing::OnMouseLeftUp(wxMouseEvent & event)
 }
 
 
+
 void actuator_drawing::OnMouseMove(wxMouseEvent & event)
 {
 
 }
+
+

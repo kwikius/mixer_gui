@@ -15,8 +15,9 @@
 #pragma hdrstop
 #endif //__BORLANDC__
 
-#include "mixer_guiApp.h"
-#include "mixer_guiMain.h"
+#include "app.hpp"
+#include "main_frame.hpp"
+#include "document.hpp"
 
 IMPLEMENT_APP(mixer_guiApp);
 
@@ -28,7 +29,7 @@ mixer_guiApp::mixer_guiApp()
 bool mixer_guiApp::OnInit()
 {
    try {
-      mixer_guiFrame* frame = new mixer_guiFrame(0L, _("mixer lang gui"));
+      main_frame* frame = new main_frame(0L, _("mixer lang gui"));
       frame->Show();
       return true;
    }catch (std::exception & e){

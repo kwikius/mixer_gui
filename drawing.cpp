@@ -1,7 +1,8 @@
 
 
-#include "mixer_guiApp.h"
+#include "app.hpp"
 #include "drawing.hpp"
+#include "document.hpp"
 
 drawing::vect drawing::get_size() const
 {

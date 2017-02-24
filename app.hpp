@@ -11,16 +11,20 @@
 #define MIXER_GUIAPP_H
 
 #include <wx/app.h>
-#include "document.hpp"
+#include <wx/thread.h>
 
-class mixer_guiApp : public wxApp
+struct document;
+
+struct mixer_guiApp : public wxApp
 {
 public:
    mixer_guiApp();
    virtual bool OnInit();
    document* get_document()const {assert(m_document);return m_document;}
+ 
 private:
    document* m_document;
+
 };
 
 DECLARE_APP(mixer_guiApp)
