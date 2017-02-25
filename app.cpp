@@ -19,6 +19,8 @@
 #include "main_frame.hpp"
 #include "document.hpp"
 
+#include "wx/joystick.h"
+
 IMPLEMENT_APP(mixer_guiApp);
 
 mixer_guiApp::mixer_guiApp()
@@ -28,7 +30,12 @@ mixer_guiApp::mixer_guiApp()
 
 bool mixer_guiApp::OnInit()
 {
-   try {
+    wxJoystick stick(wxJOYSTICK1);
+    if (!stick.IsOk()){
+        wxMessageBox(wxT("No joystick detected!"));
+        return false;
+    }
+    try {
       main_frame* frame = new main_frame(0L, _("mixer lang gui"));
       frame->Show();
       return true;

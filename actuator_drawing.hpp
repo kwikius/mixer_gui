@@ -2,6 +2,7 @@
 #define ACTUATOR_WIDGET_HPP_INCLUDED
 
 #include <wx/scrolwin.h>
+#include <wx/joystick.h>
 
 #include <quan/two_d/vect.hpp>
 #include <quan/three_d/vect.hpp>
@@ -15,8 +16,6 @@
 
 #include <vector>
 
-struct joystick_thread;
-
 struct actuator_drawing : wxScrolledWindow{
 
    void OnSize(wxSizeEvent & event);
@@ -27,6 +26,8 @@ struct actuator_drawing : wxScrolledWindow{
    void OnMouseLeftDown(wxMouseEvent & event);
    void OnMouseLeftUp(wxMouseEvent & event);
    void OnMouseMove(wxMouseEvent & event);
+
+   void OnJoystickEvent(wxJoystickEvent& event);
 
    actuator_drawing(wxWindow* parent);
 
@@ -42,7 +43,6 @@ struct actuator_drawing : wxScrolledWindow{
    typedef quan::three_d::vect<mm>             vect3_mm;
 ~actuator_drawing();
 private:
-
    drawing  m_drawing;
    quan::gx::simple_drawing_view m_drawing_view;
    quan::gx::simple_device_window m_device_window;
@@ -57,9 +57,8 @@ private:
       The actuators should use TryEnter to check for new values
    */
    int32_t   m_actuator_channel[num_actuators];
+   wxJoystick* m_joystick;
 
-   friend class joystick_thread;
-   friend class main_frame;
 };
 
 #endif // ACTUATOR_WIDGET_HPP_INCLUDED

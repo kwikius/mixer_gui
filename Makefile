@@ -37,19 +37,19 @@ INCLUDES = -I$(QUAN_INCLUDE_PATH)
 
 #########################################################
 
-local_sources = actuator.cpp actuator_drawing.cpp app.cpp document.cpp drawing.cpp joystick_thread.cpp main_frame.cpp servo.cpp
+local_sources = actuator.cpp actuator_drawing.cpp app.cpp document.cpp drawing.cpp  main_frame.cpp servo.cpp
 
 local_objects = $(patsubst %.cpp,%.o,$(local_sources))
 
-quan_gx_wxwidgets_sources = draw_box.cpp draw_circle.cpp draw_line.cpp draw_text.cpp draw_poly_line.cpp \
-graphics_context.cpp 
+quan_gx_wxwidgets_sources = draw_box.cpp draw_circle.cpp draw_line.cpp draw_text.cpp \
+draw_poly_line.cpp graphics_context.cpp 
 
 quan_gx_wxwidgets_objects = $(patsubst %.cpp,%.o,$(quan_gx_wxwidgets_sources)) 
 
 objects = $(local_objects) $(quan_gx_wxwidgets_objects) serial_port.o static_rgb_colours.o
 
 # could add -Os etc here
-CFLAGS = -Wall -std=c++11 -Os -fmax-errors=1 -g
+CFLAGS = -Wall -std=c++11 -Os -fmax-errors=1 -g -DwxUSE_JOYSTICK
 
 LFLAGS =
 

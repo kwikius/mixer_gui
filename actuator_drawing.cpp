@@ -10,7 +10,6 @@
 #include <quan/gx/primitives/simple_line.hpp>
 #include <quan/gx/wxwidgets/graphics_context.hpp>
 #include "servo.hpp"
-//#include "joystick_thread.hpp"
 
 namespace {
    QUAN_ANGLE_LITERAL(rad)
@@ -26,6 +25,7 @@ BEGIN_EVENT_TABLE(actuator_drawing,wxScrolledWindow)
    EVT_LEFT_DOWN(actuator_drawing::OnMouseLeftDown)
    EVT_LEFT_UP(actuator_drawing::OnMouseLeftUp)
    EVT_MOTION(actuator_drawing::OnMouseMove)
+   EVT_JOYSTICK_EVENTS(actuator_drawing::OnJoystickEvent)
  
 END_EVENT_TABLE()
 
@@ -37,7 +37,8 @@ actuator_drawing::~actuator_drawing()
 }
 
 actuator_drawing::actuator_drawing(wxWindow* parent)
-: wxScrolledWindow{parent}
+:wxScrolledWindow{parent}
+,m_joystick{nullptr}
 {
     // pixels
     for ( auto & p : m_actuators) {
@@ -51,13 +52,16 @@ actuator_drawing::actuator_drawing(wxWindow* parent)
     this->ShowScrollbars (wxSHOW_SB_ALWAYS,wxSHOW_SB_ALWAYS);
     this->m_drawing_view.set_scale(1);
 
-    m_actuators[0] = new servo{"V_Tail.Port",{-50_mm,-50_mm}, 0.1};
-    m_actuators[1] = new servo{"V_Tail.Stbd",{50_mm,-50_mm}, -0.1};
-    m_actuators[2] = new servo{"Throttle",{0_mm,75_mm}, 0.0};
-    m_actuators[3] = new servo{"Ail.Port.Inner",{-75_mm,0_mm}, 0.25};
-    m_actuators[4] = new servo{"Ail.Port.Outer",{-75_mm,50_mm}, -0.5};
-    m_actuators[6] = new servo{"Ail.Stbd.Inner",{75_mm,0_mm}, 0};
-    m_actuators[5] = new servo{"Ail.Stbd.Outer",{75_mm,50_mm}, 1};
+    m_actuators[0] = new servo{"CH 0",{-50_mm,-50_mm}, 0.1};
+    m_actuators[1] = new servo{"CH 1",{50_mm,-50_mm}, -0.1};
+    m_actuators[2] = new servo{"CH 2",{0_mm,75_mm}, 0.0};
+    m_actuators[3] = new servo{"CH 3",{-75_mm,0_mm}, 0.25};
+    m_actuators[4] = new servo{"CH 4",{-75_mm,50_mm}, -0.5};
+    m_actuators[5] = new servo{"CH 5",{75_mm,0_mm}, 0};
+    m_actuators[6] = new servo{"CH 6",{75_mm,50_mm}, 1};
+
+    m_joystick = new wxJoystick{wxJOYSTICK1};
+    m_joystick->SetCapture(this,10);
 }
 
 void actuator_drawing::OnSize(wxSizeEvent & event)
@@ -98,11 +102,17 @@ void actuator_drawing::OnPaint(wxPaintEvent & event)
    for (uint8_t i = 0u ; i < num_actuators; ++i){
       auto p = m_actuators[i];
       if ( p != nullptr){
-         p->set_value(m_actuator_channel[i]/ 32767.0);;
-         p->draw(wc);
+         if ( i < m_joystick->GetNumberAxes()){
+            p->set_value(m_joystick->GetPosition(i)/ 32767.0);
+            p->draw(wc);
+         }
       }
    }
+}
 
+void actuator_drawing::OnJoystickEvent(wxJoystickEvent& event)
+{
+   this->Refresh();
 }
 
 void actuator_drawing::OnScroll(wxScrollWinEvent & event)
