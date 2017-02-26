@@ -50,6 +50,4 @@ void servo::draw(quan::gx::wxwidgets::graphics_context const & wc) const
     wc.draw_circle(c);
     wc.draw_polyline(poly);
     wc.draw_text(name);
-    
-    
 }
