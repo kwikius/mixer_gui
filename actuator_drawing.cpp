@@ -52,16 +52,18 @@ actuator_drawing::actuator_drawing(wxWindow* parent)
     this->ShowScrollbars (wxSHOW_SB_ALWAYS,wxSHOW_SB_ALWAYS);
     this->m_drawing_view.set_scale(1);
 
-    m_actuators[0] = new servo{"CH 0",{-50_mm,-50_mm}, 0.1};
-    m_actuators[1] = new servo{"CH 1",{50_mm,-50_mm}, -0.1};
-    m_actuators[2] = new servo{"CH 2",{0_mm,75_mm}, 0.0};
-    m_actuators[3] = new servo{"CH 3",{-75_mm,0_mm}, 0.25};
-    m_actuators[4] = new servo{"CH 4",{-75_mm,50_mm}, -0.5};
-    m_actuators[5] = new servo{"CH 5",{75_mm,0_mm}, 0};
-    m_actuators[6] = new servo{"CH 6",{75_mm,50_mm}, 1};
+    m_actuators[0] = new servo{"STBD.AIL.OUTR",{-50_mm,-50_mm}, 0.1};
+    m_actuators[1] = new servo{"STBD.AIL.INNR",{50_mm,-50_mm}, -0.1};
+    m_actuators[2] = new servo{"PORT.AIL.INNR",{0_mm,75_mm}, 0.0};
+    m_actuators[3] = new servo{"PORT.AIL.OUTR",{-75_mm,0_mm}, 0.25};
+    m_actuators[4] = new servo{"VTAIL.PORT",{-75_mm,50_mm}, -0.5};
+    m_actuators[5] = new servo{"VTAIL.STBD",{75_mm,0_mm}, 0};
+    m_actuators[6] = new servo{"THROTTLE",{75_mm,50_mm}, 1};
 
     m_joystick = new wxJoystick{wxJOYSTICK1};
     m_joystick->SetCapture(this,10);
+   
+    setup_mixer();
 }
 
 void actuator_drawing::OnSize(wxSizeEvent & event)
@@ -99,11 +101,13 @@ void actuator_drawing::OnPaint(wxPaintEvent & event)
       &this->m_device_window
    };
 
+   eval_mixer();
+
    for (uint8_t i = 0u ; i < num_actuators; ++i){
       auto p = m_actuators[i];
       if ( p != nullptr){
          if ( i < m_joystick->GetNumberAxes()){
-            p->set_value(m_joystick->GetPosition(i)/ 32767.0);
+           // p->set_value(m_joystick->GetPosition(i)/ 32767.0);
             p->draw(wc);
          }
       }

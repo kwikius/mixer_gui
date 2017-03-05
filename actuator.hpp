@@ -20,7 +20,6 @@
 
 struct actuator{
 
-
     virtual quan::two_d::vect<quan::length::mm> get_size() const = 0;
     virtual void draw(quan::gx::wxwidgets::graphics_context const & wc) const = 0;
     virtual void destroy(){ delete this;}

@@ -29,6 +29,9 @@ struct actuator_drawing : wxScrolledWindow{
 
    void OnJoystickEvent(wxJoystickEvent& event);
 
+   bool setup_mixer();
+   void eval_mixer();
+
    actuator_drawing(wxWindow* parent);
 
    DECLARE_EVENT_TABLE()
@@ -42,12 +45,14 @@ struct actuator_drawing : wxScrolledWindow{
 
    typedef quan::three_d::vect<mm>             vect3_mm;
 ~actuator_drawing();
-private:
+//private:
    drawing  m_drawing;
    quan::gx::simple_drawing_view m_drawing_view;
    quan::gx::simple_device_window m_device_window;
 
    static constexpr uint8_t num_actuators = 16;
+public:
+   uint8_t get_num_actuators()const { return num_actuators;}
 
    actuator* m_actuators[num_actuators];
    /*
@@ -58,6 +63,8 @@ private:
    */
    int32_t   m_actuator_channel[num_actuators];
    wxJoystick* m_joystick;
+
+   
 
 };
 

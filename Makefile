@@ -25,6 +25,7 @@ LD = g++
 # Modify this to your quan include path
 QUAN_INCLUDE_PATH = /home/andy/cpp/projects/quan-trunk/
 
+MIXER_LANG_INCLUDE_PATH = /home/andy/cpp/projects/mixer_lang/include/
 # try comment this ...
 #C_INCLUDE_PATH = /usr/include/i386-linux-gnu
 
@@ -32,12 +33,15 @@ QUAN_INCLUDE_PATH = /home/andy/cpp/projects/quan-trunk/
 # On my Ubuntu system the C++ headers and default compiler are not c++11
 # The C_INCLUDE_PATH is required to get it to compile
 
-INCLUDES = -I$(QUAN_INCLUDE_PATH) 
+INCLUDES = -I$(QUAN_INCLUDE_PATH) -I$(MIXER_LANG_INCLUDE_PATH)
 #INCLUDES = -I$(QUAN_INCLUDE_PATH) -I$(C_INCLUDE_PATH)
+
+mixer_lib = /home/andy/cpp/projects/mixer_lang/build/mixer_lang.a
 
 #########################################################
 
-local_sources = actuator.cpp actuator_drawing.cpp app.cpp document.cpp drawing.cpp  main_frame.cpp servo.cpp
+local_sources = actuator.cpp actuator_drawing.cpp app.cpp document.cpp drawing.cpp \
+main_frame.cpp servo.cpp mixer.cpp
 
 local_objects = $(patsubst %.cpp,%.o,$(local_sources))
 
@@ -70,7 +74,7 @@ static_rgb_colours.o : $(QUAN_INCLUDE_PATH)quan_matters/src/gx/static_rgb_colour
 	$(CC) -c $(CFLAGS) $(INCLUDES) $< -o $@ `wx-config --cppflags`
 
 $(APPLICATION_NAME) : $(objects)
-	$(LD) $(CFLAGS) $(LFLAGS) -o $(APPLICATION_NAME) $(objects)  `wx-config --libs`
+	$(LD) $(CFLAGS) $(LFLAGS) -o $(APPLICATION_NAME) $(objects) $(mixer_lib) `wx-config --libs`
 
 clean:
 	-rm -rf *.o *.exe
