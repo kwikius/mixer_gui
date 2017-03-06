@@ -57,8 +57,8 @@ namespace {
       if ( p_drawing && (N < p_drawing->get_num_actuators()) &&  p_drawing->m_actuators[N]){
          p_drawing->m_actuators[N]->set_value(v);
       }
-    }
-   
+   }
+
    apm_mix::abc_expr* outputs[] = {
        new apm_mix::output<apm_mix::float_t>{output_action<0>}
      , new apm_mix::output<apm_mix::float_t>{output_action<1>}
@@ -90,3 +90,4 @@ bool actuator_drawing::setup_mixer()
       }
    return true;
 }
+
