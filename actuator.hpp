@@ -33,15 +33,18 @@ struct actuator{
     quan::two_d::vect<quan::length::mm> get_position()const { return m_position;}
     // centre of nominal drawing for mous clicks
     void set_position(quan::two_d::vect<quan::length::mm> const & in) { m_position = in;}
+    quan::angle::rad get_rotation() const { return m_rotation;}
     std::string get_name() const { return m_name;}
   protected:
     virtual ~actuator(){}
     actuator(
          std::string const& name_in, 
          quan::two_d::vect<quan::length::mm> const & pos_in, 
+         quan::angle::rad const & rot_in,
          value_type const & value_in)
         :m_name{name_in}
         ,m_position{pos_in}
+        ,m_rotation{rot_in}
         ,m_max_value{1.0}
         ,m_min_value{-1.0}
         {
@@ -51,6 +54,7 @@ struct actuator{
    
     std::string m_name;
     quan::two_d::vect<quan::length::mm> m_position;
+    quan::angle::rad m_rotation;
     value_type const m_max_value;
     value_type const m_min_value;
     value_type m_value;

@@ -34,7 +34,7 @@ void servo::draw(quan::gx::wxwidgets::graphics_context const & wc) const
          ,bottom_right(box)
     };
 
-    quan::two_d::rotation rotate{this->value_to_angle()};
+    quan::two_d::rotation rotate{this->value_to_angle() + this->get_rotation()};
     for ( auto & v: vec) {
        v = rotate(v) + pos;
     }
@@ -43,7 +43,7 @@ void servo::draw(quan::gx::wxwidgets::graphics_context const & wc) const
 
     quan::gx::primitives::simple_text<mm> name{
       this->get_name()
-      ,pos + vect_mm{5_mm,0_mm}
+      ,pos + vect_mm{-10_mm,-10_mm}
       ,5_mm
     };
         

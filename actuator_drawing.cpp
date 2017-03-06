@@ -34,6 +34,10 @@ actuator_drawing::~actuator_drawing()
     for ( auto & p : m_actuators) {
        if (p) {p->destroy();}
     }
+    if ( m_joystick){
+       m_joystick->ReleaseCapture();
+       delete m_joystick;
+    }
 }
 
 actuator_drawing::actuator_drawing(wxWindow* parent)
@@ -52,13 +56,13 @@ actuator_drawing::actuator_drawing(wxWindow* parent)
     this->ShowScrollbars (wxSHOW_SB_ALWAYS,wxSHOW_SB_ALWAYS);
     this->m_drawing_view.set_scale(1);
 
-    m_actuators[0] = new servo{"STBD.AIL.OUTR",{-50_mm,-50_mm}, 0.1};
-    m_actuators[1] = new servo{"STBD.AIL.INNR",{50_mm,-50_mm}, -0.1};
-    m_actuators[2] = new servo{"PORT.AIL.INNR",{0_mm,75_mm}, 0.0};
-    m_actuators[3] = new servo{"PORT.AIL.OUTR",{-75_mm,0_mm}, 0.25};
-    m_actuators[4] = new servo{"VTAIL.PORT",{-75_mm,50_mm}, -0.5};
-    m_actuators[5] = new servo{"VTAIL.STBD",{75_mm,0_mm}, 0};
-    m_actuators[6] = new servo{"THROTTLE",{75_mm,50_mm}, 1};
+    m_actuators[0] = new servo{"STBD.AIL.OUTR",{80_mm,20_mm},180_deg};
+    m_actuators[1] = new servo{"STBD.AIL.INNR",{30_mm,20_mm},180_deg};
+    m_actuators[2] = new servo{"PORT.AIL.INNR",{-30_mm,20_mm}};
+    m_actuators[3] = new servo{"PORT.AIL.OUTR",{-80_mm,20_mm}};
+    m_actuators[4] = new servo{"VTAIL.PORT",{-20_mm,-20_mm}};
+    m_actuators[5] = new servo{"VTAIL.STBD",{20_mm,-20_mm},180_deg};
+    m_actuators[6] = new servo{"THROTTLE",{0_mm,70_mm},180_deg, -1.0}; // 
 
     m_joystick = new wxJoystick{wxJOYSTICK1};
     m_joystick->SetCapture(this,10);
