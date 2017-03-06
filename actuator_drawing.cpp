@@ -29,14 +29,16 @@ BEGIN_EVENT_TABLE(actuator_drawing,wxScrolledWindow)
  
 END_EVENT_TABLE()
 
-
-
 actuator_drawing::~actuator_drawing()
 {
     for ( auto & p : m_actuators) {
        if (p) {p->destroy();}
     }
 
+    if (m_joystick){
+      delete m_joystick;
+      m_joystick = nullptr;
+    }
 }
 
 actuator_drawing::actuator_drawing(wxWindow* parent)
@@ -119,15 +121,10 @@ void actuator_drawing::OnPaint(wxPaintEvent & event)
 void actuator_drawing::OnClose(wxCloseEvent& event)
 {
    // Though same as wxWidgets joystick examples
-   // coredumps atm since I am not calling thradTestDestroy
-   // Need to derive to do that I think
+   // coredumps atm. 
    if (m_joystick){
       m_joystick->ReleaseCapture();
-      delete m_joystick;
-      m_joystick = nullptr;
    }
-   
-
 }
 
 void actuator_drawing::OnJoystickEvent(wxJoystickEvent& event)
