@@ -18,7 +18,7 @@ namespace {
 }
 
 BEGIN_EVENT_TABLE(actuator_drawing,wxScrolledWindow)
-
+   EVT_CLOSE(actuator_drawing::OnClose)
    EVT_SIZE(actuator_drawing::OnSize)
    EVT_PAINT(actuator_drawing::OnPaint)
    EVT_SCROLLWIN(actuator_drawing::OnScroll)
@@ -29,15 +29,14 @@ BEGIN_EVENT_TABLE(actuator_drawing,wxScrolledWindow)
  
 END_EVENT_TABLE()
 
+
+
 actuator_drawing::~actuator_drawing()
 {
     for ( auto & p : m_actuators) {
        if (p) {p->destroy();}
     }
-    if ( m_joystick){
-       m_joystick->ReleaseCapture();
-       delete m_joystick;
-    }
+
 }
 
 actuator_drawing::actuator_drawing(wxWindow* parent)
@@ -110,12 +109,25 @@ void actuator_drawing::OnPaint(wxPaintEvent & event)
    for (uint8_t i = 0u ; i < num_actuators; ++i){
       auto p = m_actuators[i];
       if ( p != nullptr){
-         if ( i < m_joystick->GetNumberAxes()){
-           // p->set_value(m_joystick->GetPosition(i)/ 32767.0);
+         if ( m_joystick && (i < m_joystick->GetNumberAxes())){
             p->draw(wc);
          }
       }
    }
+}
+
+void actuator_drawing::OnClose(wxCloseEvent& event)
+{
+   // Though same as wxWidgets joystick examples
+   // coredumps atm since I am not calling thradTestDestroy
+   // Need to derive to do that I think
+   if (m_joystick){
+      m_joystick->ReleaseCapture();
+      delete m_joystick;
+      m_joystick = nullptr;
+   }
+   
+
 }
 
 void actuator_drawing::OnJoystickEvent(wxJoystickEvent& event)
@@ -152,8 +164,6 @@ void actuator_drawing::OnMouseLeftUp(wxMouseEvent & event)
 {
 
 }
-
-
 
 void actuator_drawing::OnMouseMove(wxMouseEvent & event)
 {

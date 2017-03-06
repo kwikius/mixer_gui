@@ -57,6 +57,7 @@ main_frame::main_frame(wxFrame *frame, const wxString& title)
 
 main_frame::~main_frame()
 {
+   delete m_actuator_drawing;
 }
 
 
@@ -72,6 +73,7 @@ void main_frame::OnClose(wxCloseEvent &event)
 
 void main_frame::OnQuit(wxCommandEvent &event)
 {
+    
     Destroy();
 }
 

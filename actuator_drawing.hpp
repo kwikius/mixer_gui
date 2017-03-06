@@ -26,6 +26,7 @@ struct actuator_drawing : wxScrolledWindow{
    void OnMouseLeftDown(wxMouseEvent & event);
    void OnMouseLeftUp(wxMouseEvent & event);
    void OnMouseMove(wxMouseEvent & event);
+   void OnClose(wxCloseEvent& event);
 
    void OnJoystickEvent(wxJoystickEvent& event);
 
