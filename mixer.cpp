@@ -70,6 +70,7 @@ namespace {
    };
    //const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/flyingwing.mix";
    const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/glider.mix";
+  // const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/crow.mix";
 } // namespace
 
 void actuator_drawing::eval_mixer()
