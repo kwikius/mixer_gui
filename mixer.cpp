@@ -35,14 +35,6 @@ namespace {
          return 0;
       }
    }  
-
-   apm_mix::float_t get_roll(){ return get_joystick_value(0);}
-   apm_mix::float_t get_pitch() { return get_joystick_value(1);}
-   apm_mix::float_t get_throttle() { return get_joystick_value(2);}
-   apm_mix::float_t get_yaw()  { return get_joystick_value(3);}
-   apm_mix::float_t get_flap() { return get_joystick_value(4);}
-   apm_mix::float_t get_control_mode() { return get_joystick_value(5);}
-
    // This value simulates the airspeed sensor reading
    // TODO make a way to vary it when running for sim ... prob
    // more suitable for a GUI version
@@ -58,13 +50,13 @@ namespace {
    bool failsafe_on() { return in_failsafe;}
 
    apm_mix::input_pair inputs[] = { 
-      {"Pitch", get_pitch},
-      {"Yaw",  get_yaw},
-      {"Roll", get_roll},
-      {"Throttle", get_throttle},
-      {"Flap", get_flap},
+      {"Pitch",static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(1);})},
+      {"Yaw",  static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(3);})},
+      {"Roll", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(0);})},
+      {"Throttle", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(2);})},
+      {"Flap", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(4);})},
       {"Airspeed", get_airspeed},
-      {"ControlMode", get_control_mode},
+      {"ControlMode", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return get_joystick_value(5);})},
       {"ARSPD_MIN", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 10.0;})},
       {"ARSPD_CRUISE",static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 12.0;})},
       {"ARSPD_MAX", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 20.0;})},
