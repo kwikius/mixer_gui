@@ -30,8 +30,9 @@ struct actuator_drawing : wxScrolledWindow{
 
    void OnJoystickEvent(wxJoystickEvent& event);
 
-   bool setup_mixer();
+   bool create_mixer_from_file(const char * filename);
    void eval_mixer();
+   void close_mixer();
 
    actuator_drawing(wxWindow* parent);
    ~actuator_drawing();

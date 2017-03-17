@@ -21,6 +21,7 @@
 
 BEGIN_EVENT_TABLE(main_frame, wxFrame)
     EVT_CLOSE(main_frame::OnClose)
+    EVT_MENU(wxID_OPEN,main_frame::OnFileOpen)
     EVT_MENU(idMenuQuit, main_frame::OnQuit)
     EVT_MENU(idMenuAbout, main_frame::OnAbout)
 
@@ -33,8 +34,9 @@ main_frame::main_frame(wxFrame *frame, const wxString& title)
     // create a menu bar
     wxMenuBar* mbar = new wxMenuBar();
     wxMenu* fileMenu = new wxMenu(_T(""));
+    fileMenu->Append(wxID_OPEN, _("&Open...\tCtrl+0"), _("Open a File"));
     fileMenu->Append(idMenuQuit, _("&Quit\tAlt-F4"), _("Quit the application"));
-    fileMenu->Append(idMenuConnect, _("&Connect\tF1"), _("Connect"));
+
     mbar->Append(fileMenu, _("&File"));
 
     wxMenu* helpMenu = new wxMenu(_T(""));
@@ -64,6 +66,16 @@ main_frame::~main_frame()
 bool main_frame::Destroy()
 {
    return wxFrame::Destroy();
+}
+
+void main_frame::OnFileOpen(wxCommandEvent &event)
+{
+    wxFileDialog fd(this,"Open Mixer File","","","Mixer file (*.mix)|*.mix",wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+
+    if (fd.ShowModal() != wxID_CANCEL){
+       // if need to test for current
+       m_actuator_drawing->create_mixer_from_file(fd.GetPath());
+    }
 }
 
 void main_frame::OnClose(wxCloseEvent &event)

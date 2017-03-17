@@ -1,6 +1,27 @@
 
 #include "actuator_drawing.hpp"
 #include <mixer_lang.hpp>
+#include <mixer_lang_filestream.hpp>
+#include <cstdio>
+#include <cstring>
+
+bool apm_mix::yyerror(const char* str )
+{
+   char buf[200];
+   sprintf(buf,"line %i , error : %s", apm_lexer::get_line_number(),str);
+   wxMessageBox(buf);
+   return false;
+}
+
+char * apm_mix::duplicate_string(const char *s)
+{
+    return ::strdup(s);
+}
+
+void apm_mix::delete_string(const char* s)
+{
+    ::free(const_cast<char*>(s));
+}
 
 namespace {
 
@@ -37,18 +58,18 @@ namespace {
    bool failsafe_on() { return in_failsafe;}
 
    apm_mix::input_pair inputs[] = { 
-      apm_mix::input_pair{"Pitch", get_pitch},
-      apm_mix::input_pair{"Yaw",  get_yaw},
-      apm_mix::input_pair{"Roll", get_roll},
-      apm_mix::input_pair{"Throttle", get_throttle},
-      apm_mix::input_pair{"Flap", get_flap},
-      apm_mix::input_pair{"Airspeed", get_airspeed},
-      apm_mix::input_pair{"ControlMode", get_control_mode},
-      apm_mix::input_pair{"ARSPD_MIN", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 10.0;})},
-      apm_mix::input_pair{"ARSPD_CRUISE",static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 12.0;})},
-      apm_mix::input_pair{"ARSPD_MAX", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 20.0;})},
-      apm_mix::input_pair{"FAILSAFE_ON", failsafe_on},
-      apm_mix::input_pair{"DUMMY_INT", static_cast<apm_mix::int_t(*)()>([]()->apm_mix::int_t{return 1000;})}
+      {"Pitch", get_pitch},
+      {"Yaw",  get_yaw},
+      {"Roll", get_roll},
+      {"Throttle", get_throttle},
+      {"Flap", get_flap},
+      {"Airspeed", get_airspeed},
+      {"ControlMode", get_control_mode},
+      {"ARSPD_MIN", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 10.0;})},
+      {"ARSPD_CRUISE",static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 12.0;})},
+      {"ARSPD_MAX", static_cast<apm_mix::float_t(*)()>([]()->apm_mix::float_t{return 20.0;})},
+      {"FAILSAFE_ON", failsafe_on},
+      {"DUMMY_INT", static_cast<apm_mix::int_t(*)()>([]()->apm_mix::int_t{return 1000;})}
    };
 
    template <unsigned  N>
@@ -59,36 +80,48 @@ namespace {
       }
    }
 
-   apm_mix::abc_expr* outputs[] = {
-       new apm_mix::output<apm_mix::float_t>{output_action<0>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<1>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<2>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<3>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<4>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<5>}
-     , new apm_mix::output<apm_mix::float_t>{output_action<6>}
+   apm_mix::output<apm_mix::float_t> outputs[] = {
+       {output_action<0>}
+     , {output_action<1>}
+     , {output_action<2>}
+     , {output_action<3>}
+     , {output_action<4>}
+     , {output_action<5>}
+     , {output_action<6>}
    };
-   //const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/flyingwing.mix";
-   const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/glider.mix";
-  // const char * const mixer_filename = "/home/andy/cpp/projects/mixer_lang/mixers/generic/crow.mix";
+
 } // namespace
 
 void actuator_drawing::eval_mixer()
 {
-   apm_mix::mixer_eval();
+   if ( p_drawing != nullptr){
+      apm_mix::mixer_eval();
+   }
+}
+void actuator_drawing::close_mixer()
+{
+   if ( p_drawing){
+      apm_mix::close_mixer();
+      p_drawing = nullptr;
+   }
 }
 
-bool actuator_drawing::setup_mixer()
+bool actuator_drawing::create_mixer_from_file(const char* filename)
 {
+   apm_lexer::filestream_t stream{filename};
    p_drawing = this;
+   bool result = false;
    if  ( !apm_mix::mixer_create(
-          mixer_filename
+          &stream
          ,inputs, sizeof(inputs)/sizeof(inputs[0])
          ,outputs, sizeof(outputs)/sizeof(outputs[0])
       )){
-         wxMessageBox("Create mixer failed");
-         return false;
-      }
-   return true;
+      wxMessageBox("Create mixer failed");
+      close_mixer();
+   }else{
+      result = true;
+   }
+   return result;
+   
 }
 

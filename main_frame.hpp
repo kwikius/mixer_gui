@@ -27,6 +27,7 @@ private:
       idMenuConnect
    };
    void OnClose(wxCloseEvent& event);
+   void OnFileOpen(wxCommandEvent& event);
    void OnQuit(wxCommandEvent& event);
    void OnAbout(wxCommandEvent& event);
    void OnConnect(wxCommandEvent& event);
