@@ -4,14 +4,8 @@
 #include <mixer_lang_filestream.hpp>
 #include <cstdio>
 #include <cstring>
+#include <quan/gx/wxwidgets/to_wxString.hpp>
 
-bool apm_mix::yyerror(const char* str )
-{
-   char buf[200];
-   sprintf(buf,"line %i , error : %s", apm_lexer::get_line_number(),str);
-   wxMessageBox(buf);
-   return false;
-}
 
 char * apm_mix::duplicate_string(const char *s)
 {
@@ -82,7 +76,17 @@ namespace {
      , {output_action<6>}
    };
 
+   char error_message[200];
+
 } // namespace
+
+bool apm_mix::yyerror(const char* str )
+{
+
+   snprintf(error_message,200,"line %i , error : %s", apm_lexer::get_line_number(),str);
+
+   return false;
+}
 
 void actuator_drawing::eval_mixer()
 {
@@ -108,8 +112,8 @@ bool actuator_drawing::create_mixer_from_file(const char* filename)
          ,inputs, sizeof(inputs)/sizeof(inputs[0])
          ,outputs, sizeof(outputs)/sizeof(outputs[0])
       )){
-      wxMessageBox("Create mixer failed");
       close_mixer();
+      wxMessageBox(quan::gx::wxwidgets::to_wxString(error_message));
    }else{
       result = true;
    }
