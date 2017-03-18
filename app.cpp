@@ -25,6 +25,7 @@ IMPLEMENT_APP(mixer_guiApp);
 
 mixer_guiApp::mixer_guiApp()
 :m_document{new document}
+,m_app_config {new wxConfig(wxT("Mixer GUI"))}
 {
 }
 
@@ -32,8 +33,8 @@ bool mixer_guiApp::OnInit()
 {
     wxJoystick stick(wxJOYSTICK1);
     if (!stick.IsOk()){
-        wxMessageBox(wxT("No joystick detected!"));
-        return false;
+       wxMessageBox(wxT("No joystick detected!"));
+       return false;
     }
     try {
       main_frame* frame = new main_frame(0L, _("mixer lang gui"));
@@ -43,4 +44,10 @@ bool mixer_guiApp::OnInit()
      wxASSERT(false);
      return false;
    }
+}
+
+mixer_guiApp::~mixer_guiApp()
+{
+   delete m_document;
+   delete m_app_config;
 }

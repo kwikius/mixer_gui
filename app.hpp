@@ -11,7 +11,7 @@
 #define MIXER_GUIAPP_H
 
 #include <wx/app.h>
-#include <wx/thread.h>
+#include <wx/config.h>
 
 struct document;
 
@@ -19,11 +19,15 @@ struct mixer_guiApp : public wxApp
 {
 public:
    mixer_guiApp();
+   ~mixer_guiApp();
    virtual bool OnInit();
    document* get_document()const {assert(m_document);return m_document;}
+
+   wxConfig* get_config()const {return m_app_config;}
  
 private:
    document* m_document;
+   wxConfig* m_app_config;
 
 };
 

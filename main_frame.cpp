@@ -15,6 +15,7 @@
 #pragma hdrstop
 #endif //__BORLANDC__
 
+#include <wx/filename.h>
 #include "main_frame.hpp"
 #include "app.hpp"
 #include "actuator_drawing.hpp"
@@ -70,12 +71,21 @@ bool main_frame::Destroy()
 
 void main_frame::OnFileOpen(wxCommandEvent &event)
 {
-    wxFileDialog fd(this,"Open Mixer File","","","Mixer file (*.mix)|*.mix",wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+   wxString dirname =  wxGetApp().get_config()->Read(wxT ("/LastMixerFile/Directory"), wxT (""));
+   wxString filename =  wxGetApp().get_config()->Read(wxT ("/LastMixerFile/Name"), wxT (""));
 
-    if (fd.ShowModal() != wxID_CANCEL){
-       // if need to test for current
-       m_actuator_drawing->create_mixer_from_file(fd.GetPath());
-    }
+   wxFileDialog fd(this,"Open Mixer File",dirname,filename,"Mixer file (*.mix)|*.mix",wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+
+   if (fd.ShowModal() != wxID_CANCEL){
+      // create mixer returns  false to indicate failure
+      // However
+      // let us move to new dir on fail as well as success since
+      // user will want to edit the script and try again maybe
+      m_actuator_drawing->create_mixer_from_file(fd.GetPath());
+      wxFileName fn{fd.GetPath()};
+      wxGetApp().get_config()->Write(wxT ("/LastMixerFile/Directory"),fn.GetPath() );
+      wxGetApp().get_config()->Write(wxT ("/LastMixerFile/Name"),fn.GetName() );
+   }
 }
 
 void main_frame::OnClose(wxCloseEvent &event)
